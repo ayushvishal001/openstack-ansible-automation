@@ -1,0 +1,36 @@
+PLAY [Check OpenStack services & Swift status] **********************************************************************
+
+TASK [Ping the node] ************************************************************************************************
+ok: [localhost]
+
+TASK [Check OpenStack services] *************************************************************************************
+ok: [localhost] => (item={'name': 'nova'}) => {
+    "msg": "nova: active"
+}
+ok: [localhost] => (item={'name': 'neutron'}) => {
+    "msg": "neutron: active"
+}
+ok: [localhost] => (item={'name': 'keystone'}) => {
+    "msg": "keystone: active"
+}
+ok: [localhost] => (item={'name': 'swift'}) => {
+    "msg": "swift: active"
+}
+
+PLAY RECAP **********************************************************************************************************
+localhost                  : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+PLAY [Check HA status of OpenStack services] *************************************************************************
+
+TASK [Check if Nova service is running] *****************************************************************************
+ok: [localhost] => {
+    "nova_status.stdout": "active"
+}
+
+TASK [Check if Neutron service is running] **************************************************************************
+ok: [localhost] => {
+    "neutron_status.stdout": "active"
+}
+
+PLAY RECAP **********************************************************************************************************
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
