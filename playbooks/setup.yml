@@ -1,0 +1,27 @@
+- name: Setup DevStack dependencies
+  hosts: openstack
+  become: true
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - git
+          - python3-pip
+          - python3-dev
+          - build-essential
+          - libssl-dev
+          - libffi-dev
+          - libxml2-dev
+          - libxslt1-dev
+          - zlib1g-dev
+          - libmysqlclient-dev
+          - libpq-dev
+          - libvirt-dev
+          - qemu-kvm
+          - virt-manager
+          - bridge-utils
+          - libguestfs-tools
+          - ovmf
+          - net-tools
+        state: present
+        update_cache: yes

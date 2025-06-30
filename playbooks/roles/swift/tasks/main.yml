@@ -1,0 +1,10 @@
+---
+- name: Check if swift-proxy service is running
+  shell: systemctl is-active devstack@swift-proxy.service
+  register: swift_status
+  ignore_errors: yes
+
+- name: Print Swift proxy service status
+  debug:
+    msg: "swift-proxy service is {{ swift_status.stdout }}"
+

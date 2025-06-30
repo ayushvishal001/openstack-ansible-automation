@@ -1,0 +1,10 @@
+---
+- name: Check if nova-api service is running
+  shell: systemctl is-active devstack@n-api.service
+  register: nova_api_status
+  ignore_errors: yes
+
+- name: Print Nova API service status
+  debug:
+    msg: "nova-api service is {{ nova_api_status.stdout }}"
+

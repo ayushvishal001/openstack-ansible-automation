@@ -1,0 +1,10 @@
+---
+- name: Check if trove service is running
+  shell: systemctl is-active devstack@trove-api.service
+  register: trove_status
+  ignore_errors: yes
+
+- name: Print Trove service status
+  debug:
+    msg: "trove-api service is {{ trove_status.stdout }}"
+
