@@ -1,10 +1,24 @@
----
 - name: Check if swift-proxy service is running
-  shell: systemctl is-active devstack@swift-proxy.service
+  command: systemctl is-active devstack@swift-proxy.service
   register: swift_status
   ignore_errors: yes
 
-- name: Print Swift proxy service status
+- name: Restart swift-proxy if inactive
+  command: systemctl restart devstack@swift-proxy.service
+  when: swift_status.stdout != "active"
+
+- name: Re-check swift-proxy status
+  command: systemctl is-active devstack@swift-proxy.service
+  register: swift_status_after
+  ignore_errors: yes
+
+- name: Fail if swift-proxy is still inactive
+  fail:
+    msg: "swift-proxy service is still inactive after restart!"
+  when: swift_status_after.stdout != "active"
+
+- name: Print Swift proxy final status
   debug:
-    msg: "swift-proxy service is {{ swift_status.stdout }}"
+    msg: "swift-proxy service is {{ swift_status_after.stdout }}"
+
 

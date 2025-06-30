@@ -1,10 +1,24 @@
----
-- name: Check if trove service is running
-  shell: systemctl is-active devstack@trove-api.service
+- name: Check if trove-api service is running
+  command: systemctl is-active devstack@trove-api.service
   register: trove_status
   ignore_errors: yes
 
-- name: Print Trove service status
+- name: Restart trove-api if inactive
+  command: systemctl restart devstack@trove-api.service
+  when: trove_status.stdout != "active"
+
+- name: Re-check trove-api status
+  command: systemctl is-active devstack@trove-api.service
+  register: trove_status_after
+  ignore_errors: yes
+
+- name: Fail if trove-api is still inactive
+  fail:
+    msg: "trove-api service is still inactive after restart!"
+  when: trove_status_after.stdout != "active"
+
+- name: Print Trove API final status
   debug:
-    msg: "trove-api service is {{ trove_status.stdout }}"
+    msg: "trove-api service is {{ trove_status_after.stdout }}"
+
 

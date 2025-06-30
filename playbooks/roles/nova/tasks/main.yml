@@ -1,10 +1,24 @@
----
 - name: Check if nova-api service is running
-  shell: systemctl is-active devstack@n-api.service
-  register: nova_api_status
+  command: systemctl is-active devstack@n-api.service
+  register: nova_status
   ignore_errors: yes
 
-- name: Print Nova API service status
+- name: Restart nova-api service if inactive
+  command: systemctl restart devstack@n-api.service
+  when: nova_status.stdout != "active"
+
+- name: Re-check nova-api service status
+  command: systemctl is-active devstack@n-api.service
+  register: nova_status_after
+  ignore_errors: yes
+
+- name: Fail if nova-api service is still inactive
+  fail:
+    msg: "nova-api service is still inactive after restart!"
+  when: nova_status_after.stdout != "active"
+
+- name: Print Nova API service final status
   debug:
-    msg: "nova-api service is {{ nova_api_status.stdout }}"
+    msg: "nova-api service is {{ nova_status_after.stdout }}"
+
 

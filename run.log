@@ -1,0 +1,42 @@
+
+PLAY [openstack] ***************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+
+TASK [prerequisites : Update apt cache] ****************************************
+ok: [localhost]
+
+TASK [prerequisites : Install essential packages] ******************************
+ok: [localhost]
+
+TASK [prerequisites : Upgrade pip] *********************************************
+ok: [localhost]
+
+TASK [nova : Check if nova-api service is running] *****************************
+changed: [localhost]
+
+TASK [nova : Restart nova-api service if inactive] *****************************
+skipping: [localhost]
+
+TASK [nova : Re-check nova-api service status] *********************************
+changed: [localhost]
+
+TASK [nova : Fail if nova-api service is still inactive] ***********************
+skipping: [localhost]
+
+TASK [nova : Print Nova API service final status] ******************************
+ok: [localhost] => {
+    "msg": "nova-api service is active"
+}
+
+TASK [swift : Check if swift-proxy service is running] *************************
+fatal: [localhost]: FAILED! => {"changed": true, "cmd": ["systemctl", "is-active", "devstack@swift-proxy.service"], "delta": "0:00:00.006093", "end": "2025-06-30 21:11:53.029521", "msg": "non-zero return code", "rc": 3, "start": "2025-06-30 21:11:53.023428", "stderr": "", "stderr_lines": [], "stdout": "inactive", "stdout_lines": ["inactive"]}
+...ignoring
+
+TASK [swift : Restart swift-proxy if inactive] *********************************
+fatal: [localhost]: FAILED! => {"changed": true, "cmd": ["systemctl", "restart", "devstack@swift-proxy.service"], "delta": "0:00:00.005561", "end": "2025-06-30 21:11:53.183970", "msg": "non-zero return code", "rc": 5, "start": "2025-06-30 21:11:53.178409", "stderr": "Failed to restart devstack@swift-proxy.service: Unit devstack@swift-proxy.service not found.", "stderr_lines": ["Failed to restart devstack@swift-proxy.service: Unit devstack@swift-proxy.service not found."], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=8    changed=3    unreachable=0    failed=1    skipped=2    rescued=0    ignored=1   
+
