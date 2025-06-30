@@ -1,21 +1,47 @@
-# OpenStack Ansible Automation
+# OpenStack Deployment Automation with Ansible
 
-This repository contains Ansible playbooks and roles to automate
-the deployment and verification of an OpenStack environment.
+This repository contains an Ansible-based automation setup to validate an OpenStack DevStack deployment and check the status of core services like Nova, Swift, and Trove.
 
-## Structure
-- `inventory/hosts`: Ansible inventory file
-- `ansible.cfg`: Ansible configuration
-- `playbooks/site.yml`: Main playbook
-- `playbooks/roles`: Individual roles (prerequisites, nova, swift, trove)
+---
 
-## Usage
-Run the playbook with:
-```
+## 📁 Directory Structure
+
+
+---
+
+## 🚀 How to Run
+
+Make sure your DevStack environment is already running and DevStack services are active (e.g., `nova-api`, `swift-proxy`, `trove-api`).
+
+Then execute:
+
+```bash
 ansible-playbook playbooks/site.yml
-```
 
-## Notes
-- Tested on Ubuntu 22.04 with DevStack.
-- Services verified: Nova, Swift, Trove.
+TASK [nova : Check if nova-api service is running]
+changed: [localhost]
+
+TASK [nova : Print Nova API service status]
+ok: [localhost] => {
+    "msg": "nova-api service is active"
+}
+
+TASK [swift : Check if swift-proxy service is running]
+fatal: [localhost]: FAILED! => {"stdout": "inactive"}
+...ignoring
+
+TASK [swift : Print Swift proxy service status]
+ok: [localhost] => {
+    "msg": "swift-proxy service is inactive"
+}
+
+
+
+---
+
+Once you paste this into `README.md`, save and commit it like this:
+
+```bash
+git add README.md
+git commit -m "Add complete README with structure, usage, and sample output"
 
