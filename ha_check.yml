@@ -1,0 +1,32 @@
+---
+- name: Check HA status of OpenStack services
+  hosts: openstack_nodes
+  gather_facts: no
+
+  tasks:
+    - name: Check if Nova service is running
+      shell: systemctl is-active devstack@n-cpu
+      register: nova_status
+      failed_when: nova_status.stdout != "active"
+
+    - name: Print Nova service status
+      debug:
+        var: nova_status.stdout
+
+    - name: Check if Neutron API service is running
+      shell: systemctl is-active devstack@neutron-api
+      register: neutron_status
+      failed_when: neutron_status.stdout != "active"
+
+    - name: Print Neutron API service status
+      debug:
+        var: neutron_status.stdout
+
+    - name: Check if Swift proxy is running
+      shell: systemctl is-active devstack@s-proxy
+      register: swift_status
+      failed_when: swift_status.stdout != "active"
+
+    - name: Print Swift proxy status
+      debug:
+        var: swift_status.stdout

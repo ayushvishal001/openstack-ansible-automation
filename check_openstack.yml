@@ -1,0 +1,25 @@
+---
+- name: Check OpenStack services & Swift status
+  hosts: openstack_nodes
+  gather_facts: no
+
+  tasks:
+    - name: Ping the node
+      ansible.builtin.ping:
+
+    - name: Check OpenStack services
+      shell: bash -c "source ~/devstack/openrc && openstack service list"
+      register: openstack_services
+
+    - name: Print OpenStack services
+      debug:
+        var: openstack_services.stdout_lines
+
+    - name: Check Swift status
+      shell: bash -c "source ~/devstack/openrc && swift stat"
+      register: swift_status
+      failed_when: "'Account:' not in swift_status.stdout"
+
+    - name: Print Swift account status
+      debug:
+        var: swift_status.stdout_lines

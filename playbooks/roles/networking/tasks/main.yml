@@ -1,0 +1,69 @@
+---
+- name: Create public network
+  command: >
+    openstack network create public-net --external --provider-network-type flat
+  register: public_net
+  failed_when: public_net.rc != 0 and "already exists" not in public_net.stderr
+
+- name: Create public subnet
+  command: >
+    openstack subnet create public-subnet --network public-net --subnet-range 192.168.100.0/24 --no-dhcp --gateway 192.168.100.1
+  register: public_subnet
+  failed_when: public_subnet.rc != 0 and "already exists" not in public_subnet.stderr
+
+- name: Create private network
+  command: >
+    openstack network create private-net
+  register: private_net
+  failed_when: private_net.rc != 0 and "already exists" not in private_net.stderr
+
+- name: Create private subnet
+  command: >
+    openstack subnet create private-subnet --network private-net --subnet-range 10.0.0.0/24
+  register: private_subnet
+  failed_when: private_subnet.rc != 0 and "already exists" not in private_subnet.stderr
+
+- name: Create router
+  command: >
+    openstack router create router1
+  register: router
+  failed_when: router.rc != 0 and "already exists" not in router.stderr
+
+- name: Set router gateway
+  command: >
+    openstack router set router1 --external-gateway public-net
+  register: router_gateway
+  failed_when: false
+
+- name: Attach private subnet to router
+  command: >
+    openstack router add subnet router1 private-subnet
+  register: router_subnet
+  failed_when: false
+
+- name: Create security group for SSH and ICMP
+  command: >
+    openstack security group create allow-ssh-ping
+  register: secgroup
+  failed_when: false
+
+- name: Allow SSH (port 22)
+  command: >
+    openstack security group rule create --protocol tcp --dst-port 22 allow-ssh-ping
+  ignore_errors: true
+
+- name: Allow ICMP (ping)
+  command: >
+    openstack security group rule create --protocol icmp allow-ssh-ping
+  ignore_errors: true
+
+- name: Allocate a floating IP
+  command: >
+    openstack floating ip create public-net
+  register: floating_ip
+  failed_when: false
+
+- name: Print allocated floating IP
+  debug:
+    msg: "Allocated floating IP: {{ floating_ip.stdout_lines }}"
+
